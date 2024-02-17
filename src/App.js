@@ -1,23 +1,38 @@
-import logo from './logo.svg';
+import { useState, useRef } from 'react'
+
+import VideoCanvas from './components/video-canvas';
+import VantaCanvas from './components/vanta-canvas';
+import Controller from './components/controller';
 import './App.css';
 
 function App() {
+  const [ _started, setStarted ] = useState({ started: false, mode: "FACE" })
+  const _vantaRef = useRef()
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <main>
+        { _started.started && (
+        <div className='wrapper'>
+          <VideoCanvas 
+            mode={ _started.mode } 
+            onDetected={ point => { 
+              if( _vantaRef.current ) {
+                _vantaRef.current.setPoint( point )
+              }
+            }} 
+          />
+        </div>
+        )}
+        <div className='wrapper'>
+          <VantaCanvas ref={_vantaRef} />
+        </div>
+        { !_started.started && (
+        <div className='wrapper'>
+          <Controller onStartBtnPressed={ mode => setStarted( { started: true, mode } )} />
+        </div>
+        )}
+      </main>
     </div>
   );
 }
