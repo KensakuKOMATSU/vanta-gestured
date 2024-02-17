@@ -1,7 +1,8 @@
 {
   "name": "vanta-gestured",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
+  "author": "Kensaku Komatsu (https://twitter.com/komasshu)",
   "dependencies": {
     "@mediapipe/tasks-vision": "^0.10.9",
     "@testing-library/jest-dom": "^5.17.0",
