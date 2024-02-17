@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 
+import Header from './components/header';
 import VideoCanvas from './components/video-canvas';
 import VantaCanvas from './components/vanta-canvas';
 import Controller from './components/controller';
@@ -11,6 +12,9 @@ function App() {
   
   return (
     <div className="App">
+      <header>
+        <Header started={_started.started} />
+      </header>
       <main>
         { _started.started && (
         <div className='wrapper'>

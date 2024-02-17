@@ -19,7 +19,7 @@ export default function Controller( props:Props ) {
     <div className='Controller'>
       <Space direction='vertical'>
         <div>
-          <Title level={2}>
+          <Title level={1}>
             <span className='text'>
               Birds around face.
             </span>

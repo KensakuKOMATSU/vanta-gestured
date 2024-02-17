@@ -99,7 +99,7 @@ export default function VideoCanvas( props:Props ) {
       requestAnimationFrame( predictWebcam )
     }
 
-    message.info('detecting started!!')
+    message.info("We're ready!!")
     predictWebcam()
   }, [ mode, onDetected ])
 

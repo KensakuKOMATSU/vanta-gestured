@@ -10,6 +10,12 @@
   width: 100vw;
 }
 
+.App header {
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+}
+
 .App main .wrapper {
   height: 100%;
   position: absolute;

@@ -8,7 +8,7 @@ Birds will fly around your face.
 
 ## demo site
 
-@@@
+* https://main--birds-around-face.netlify.app/
 
 ## YouTube video
 
