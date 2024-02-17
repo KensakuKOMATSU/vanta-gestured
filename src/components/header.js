@@ -16,9 +16,11 @@ export default function Header(props:Props) {
   return (
     <div className="Header">
       <div>
-        <div className='text' style={{fontWeight: "bold", visibility: started ? "visible": "hidden"}}>
-          Birds around face.
-        </div>
+        <a href="/" alt="top">
+          <div className='text' style={{fontWeight: "bold", visibility: started ? "visible": "hidden"}}>
+            Birds around face.
+          </div>
+        </a>
       </div>
       <div className='item'>
         <a href="https://twitter.com/komasshu">
