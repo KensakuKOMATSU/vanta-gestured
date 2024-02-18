@@ -2,6 +2,9 @@ import { useCallback, useEffect, useRef } from 'react'
 import { FilesetResolver, FaceLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision'
 import { message } from 'antd'
 
+import WorkerLoader from '../libs/worker-loader'
+import ProcessingWorker from '../libs/image-processor.worker'
+
 import './video-canvas.css'
 
 const videoConstraints = {
@@ -13,6 +16,8 @@ type Props = {
   onDetected: Function,
   mode: "FACE" | "GESTURE"
 }
+
+const worker = new WorkerLoader( ProcessingWorker );
 
 export default function VideoCanvas( props:Props ) {
   const { mode, onDetected } = { 
@@ -99,7 +104,7 @@ export default function VideoCanvas( props:Props ) {
       requestAnimationFrame( predictWebcam )
     }
 
-    message.info("We're ready!!")
+    message.info("Ready & Enjoy!!")
     predictWebcam()
   }, [ mode, onDetected ])
 
@@ -144,27 +149,27 @@ export default function VideoCanvas( props:Props ) {
         _canvasNode.current.height = video.videoHeight
         const ctx = _canvasNode.current.getContext('2d')
 
-        const colors = [ 0, 96, 162, 255 ]
-        let i, imgData, gray, color, idx
+        let imgData
 
         const draw = () => {
           tmpCtx.drawImage( video, 0, 0, video.videoWidth, video.videoHeight )
           imgData = tmpCtx.getImageData( 0, 0, video.videoWidth, video.videoHeight )
 
-          for( i = 0; i < imgData.data.length; i += 4 ) {
-            gray = Math.floor(( imgData.data[i] + imgData.data[i+1] + imgData.data[i+2] ) / 3 )
-            idx = Math.floor( gray / 64 )
-            color = colors[idx]
+          worker.postMessage( {
+            width: imgData.width,
+            height: imgData.height,
+            settings: imgData.settings,
+            buffer: imgData.data.buffer
+          }, [imgData.data.buffer] )
 
-            imgData.data[i]     = idx === 3 ? color : 0
-            imgData.data[i + 1] = idx === 3 ? color : 0 //color
-            imgData.data[i + 2] = color // color
-          }
-          ctx.putImageData( imgData, 0, 0 )
-
-          requestAnimationFrame( draw )
         }
         draw()
+
+        worker.onmessage = e => {
+          const imgData = new ImageData( new Uint8ClampedArray(e.data.buffer), e.data.width, e.data.height )
+          ctx.putImageData( imgData, 0, 0 )
+          requestAnimationFrame( draw )
+        }
       }
     })();
 
