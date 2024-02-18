@@ -2,9 +2,6 @@ import { useCallback, useEffect, useRef } from 'react'
 import { FilesetResolver, FaceLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision'
 import { message } from 'antd'
 
-import WorkerLoader from '../libs/worker-loader'
-import ProcessingWorker from '../libs/image-processor.worker'
-
 import './video-canvas.css'
 
 const videoConstraints = {
@@ -17,7 +14,7 @@ type Props = {
   mode: "FACE" | "GESTURE"
 }
 
-const worker = new WorkerLoader( ProcessingWorker );
+const worker = new Worker( new URL('../libs/image-processor.worker.js', import.meta.url), {type:"module"} );
 
 export default function VideoCanvas( props:Props ) {
   const { mode, onDetected } = { 

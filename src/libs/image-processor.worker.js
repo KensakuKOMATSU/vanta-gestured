@@ -1,25 +1,29 @@
-export default function processor () {
-  const colors = [ 0, 96, 162, 255 ]
-  let i, gray, idx, color 
+  const history = []
+  let i, gray, cond
+  let imgData
 
-  onmessage = e => {
-    const imgData = new ImageData( new Uint8ClampedArray( e.data.buffer ), e.data.width, e.data.height )
+/* eslint-disable-next-line no-restricted-globals */
+  self.onmessage = e => {
+    const arr = new Uint8ClampedArray( e.data.buffer )
+    history.unshift( arr )
+    if( history.length > 5 ) history.pop()
+    imgData = new ImageData( e.data.width, e.data.height )
 
-    for( i = 0; i < imgData.data.length; i += 4 ) {
-      gray = Math.floor(( imgData.data[i] + imgData.data[i+1] + imgData.data[i+2] ) / 3 )
-      idx = Math.floor( gray / 64 )
-      color = colors[idx]
+    for( i = 0; i < arr.length; i += 4 ) {
+      gray = Math.floor(( arr[i] + arr[i+1] + arr[i+2] ) / 3 )
 
-      imgData.data[i]     = idx === 3 ? 255 : 0
-      imgData.data[i + 1] = idx === 3 ? 255 : 0 //color
-      imgData.data[i + 2] = color
+      cond = gray > 164
+
+      imgData.data[i]     = cond ? 255 : ( history[2] ? Math.floor( history[2][i] - arr[i] ) : 0 )
+      imgData.data[i + 1] = cond ? 255 : ( history[4] ? Math.floor( history[4][i + 1 ] - arr[i + 1]) : 0)
+      imgData.data[i + 2] = cond ? 255 : gray
+      imgData.data[i + 3] = 255
     }  
 
 
     postMessage({
-      width: imgData.width,
+      width:  imgData.width,
       height: imgData.height,
       buffer: imgData.data.buffer
     }, [imgData.data.buffer])
   }
-}
