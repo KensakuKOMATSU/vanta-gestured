@@ -62,6 +62,7 @@ export default function VideoCanvas( props:Props ) {
 
     let lastVideoTime = -1;
     let results
+    let timer
 
     async function predictWebcam() {
       let startTimeMs = performance.now()
@@ -87,6 +88,7 @@ export default function VideoCanvas( props:Props ) {
         }
 
         if( mode === "GESTURE" ) {
+          if( timer ) clearInterval( timer )
           results = _gestureRecognizer.current.recognizeForVideo( video, startTimeMs )
 
           if( results.landmarks && results.landmarks instanceof Array && results.landmarks.length > 0 ) {
@@ -98,6 +100,14 @@ export default function VideoCanvas( props:Props ) {
                 }
               }, { x: 0, y: 0 } ) 
             onDetected( { x: 1 - center.x, y: 1 - center.y, width: video.offsetWidth } )
+
+            timer = setInterval(() => {
+              onDetected( { 
+                x: 1 - center.x + Math.random() * 0.1, 
+                y: 1 - center.y + Math.random() * 0.1, 
+                width: video.offsetWidth 
+              } )
+            }, 30)
           }
         }
       }
